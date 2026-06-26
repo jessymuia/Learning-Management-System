@@ -13,7 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
-        with: { php-version: '8.3', extensions: pdo_pgsql }
+        with: { php-version: '8.3', extensions: 'pdo_pgsql,json' }
+      - name: Validate PHP syntax
+        working-directory: backend
+        run: find app -name '*.php' -exec php -l {} \;
       - name: Install deps
         working-directory: backend
         run: composer install --no-interaction --prefer-dist
@@ -25,7 +28,7 @@ jobs:
       - name: Run tests
         working-directory: backend
         run: ./vendor/bin/phpunit
-      - name: Lint
+      - name: Lint (non-blocking)
         working-directory: backend
         run: ./vendor/bin/pint --test || true
   frontend:
@@ -34,6 +37,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
+      - name: Install deps
+        working-directory: frontend
+        run: npm install
+      - name: Type check
+        working-directory: frontend
+        run: npx tsc --noEmit
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
       - name: Build
         working-directory: frontend
-        run: npm install && npm run build
+        run: npm run build
