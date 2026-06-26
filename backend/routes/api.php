@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\AvailabilityController;
 use App\Http\Controllers\Api\CompletionController;
 use App\Http\Controllers\Api\CredentialController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\NavigationController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\NotificationPrefsController;
 use App\Http\Controllers\Api\StructureController;
@@ -54,8 +56,6 @@ Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
-// (tenant provisioning moved into the authenticated operator-guarded group below)
-
 // public credential verification (no auth)
 Route::get('/verify/{code}', [CredentialController::class, 'verify']);
 Route::get('/branding/{slug}', [ThemingController::class, 'show']);
@@ -65,7 +65,11 @@ Route::post('/payments/mpesa/callback', [CommerceController::class, 'mpesaCallba
 Route::post('/payments/stripe/webhook', [CommerceController::class, 'stripeWebhook']);
 
 // ── authenticated ──
-Route::middleware(Authenticate::class)->group(function () {
+Route::middleware([Authenticate::class, 'cache_rbac'])->group(function () {
+    // ── NEW: Dashboard + Navigation (Phase 1) ──
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/navigation', [NavigationController::class, 'index']);
+
     // Module 1
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::get('/users', [UserController::class, 'index']);
