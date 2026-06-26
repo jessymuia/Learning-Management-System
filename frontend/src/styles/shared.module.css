@@ -1,0 +1,212 @@
+/* Shared component styles */
+
+/* ─── Loading State ─── */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  gap: 1rem;
+  min-height: 200px;
+}
+
+.loadingStateFullScreen {
+  min-height: 100vh;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border, #e0e0e0);
+  border-top-color: var(--color-accent, #1e40af);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingState p {
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
+}
+
+/* ─── Empty State ─── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  gap: 1rem;
+  min-height: 300px;
+  text-align: center;
+  border: 2px dashed var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  background: var(--color-background-secondary, #fafafa);
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  opacity: 0.6;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text, #333);
+}
+
+.emptyDescription {
+  margin: 0;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
+}
+
+.emptyAction {
+  margin-top: 1rem;
+}
+
+/* ─── Error State ─── */
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  gap: 1rem;
+  min-height: 400px;
+  text-align: center;
+  background: #fee2e2;
+  border-radius: 8px;
+  border: 2px solid #fecaca;
+}
+
+.errorIcon {
+  font-size: 3rem;
+}
+
+.errorTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #991b1b;
+}
+
+.errorMessage {
+  margin: 0;
+  color: #7f1d1d;
+  font-size: 0.95rem;
+  max-width: 500px;
+}
+
+/* ─── Sidebar Navigation ─── */
+.sidebar {
+  background: var(--color-background, #fff);
+  border-right: 1px solid var(--color-border, #e0e0e0);
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.sidebarHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+}
+
+.sidebarHeader h2 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary, #666);
+}
+
+.navList {
+  list-style: none;
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.navItem:hover {
+  background: var(--color-background-secondary, #f5f5f5);
+  color: var(--color-text, #333);
+}
+
+.navItem.active {
+  background: var(--color-accent-light, #eff6ff);
+  color: var(--color-accent, #1e40af);
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.label {
+  flex: 1;
+}
+
+/* ─── Buttons ─── */
+.button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-accent, #1e40af);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  background: var(--color-accent-dark, #1e3a8a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .loadingState {
+    min-height: 150px;
+    padding: 2rem 1rem;
+  }
+
+  .emptyState {
+    min-height: 200px;
+    padding: 2rem 1rem;
+  }
+
+  .errorState {
+    min-height: 300px;
+    padding: 2rem 1rem;
+  }
+
+  .sidebar {
+    max-height: calc(100vh - 50px);
+  }
+}
