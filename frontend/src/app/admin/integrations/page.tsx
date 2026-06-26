@@ -1,184 +1,188 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
-import { useRequireAuth } from '@/lib/useAuth';
-import { AppShell } from '@/components/AppShell';
-import { api, auth, ApiException, type IntegrationSetting } from '@/lib/api';
 
-// field definitions per provider (label, key, secret?)
-const FIELDS: Record<string, { title: string; fields: { key: string; label: string; secret?: boolean; placeholder?: string }[] }> = {
-  stripe: { title: 'Stripe (card payments)', fields: [
-    { key: 'publishable_key', label: 'Publishable key', placeholder: 'pk_live_…' },
-    { key: 'secret_key', label: 'Secret key', secret: true, placeholder: 'sk_live_…' },
-    { key: 'webhook_secret', label: 'Webhook signing secret', secret: true, placeholder: 'whsec_…' },
-  ]},
-  mpesa: { title: 'M-Pesa (Daraja)', fields: [
-    { key: 'env', label: 'Environment (sandbox/production)', placeholder: 'sandbox' },
-    { key: 'consumer_key', label: 'Consumer key' },
-    { key: 'consumer_secret', label: 'Consumer secret', secret: true },
-    { key: 'shortcode', label: 'Shortcode' },
-    { key: 'passkey', label: 'Passkey', secret: true },
-    { key: 'callback_url', label: 'Callback URL', placeholder: 'https://…/api/payments/mpesa/callback' },
-    { key: 'callback_secret', label: 'Callback secret', secret: true },
-  ]},
-  mux: { title: 'Mux (video)', fields: [
-    { key: 'signing_key_id', label: 'Signing key ID' },
-    { key: 'signing_key', label: 'Signing key (base64)', secret: true },
-  ]},
-  smtp: { title: 'Email (SMTP)', fields: [
-    { key: 'host', label: 'Host', placeholder: 'smtp.example.com' },
-    { key: 'port', label: 'Port', placeholder: '587' },
-    { key: 'username', label: 'Username' },
-    { key: 'password', label: 'Password', secret: true },
-    { key: 'from_address', label: 'From address', placeholder: 'noreply@…' },
-  ]},
-  sso_oidc: { title: 'SSO (OIDC)', fields: [
-    { key: 'issuer', label: 'Issuer URL' },
-    { key: 'client_id', label: 'Client ID' },
-    { key: 'client_secret', label: 'Client secret', secret: true },
-    { key: 'redirect_uri', label: 'Redirect URI' },
-  ]},
-};
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import EmptyState from '@/components/EmptyState';
+import LoadingState from '@/components/LoadingState';
+import styles from '@/styles/admin.module.css';
 
+interface Integration {
+  id: string;
+  provider: string;
+  name: string;
+  category: string;
+  icon: string;
+  environment: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AvailableIntegration {
+  provider: string;
+  name: string;
+  category: string;
+  icon: string;
+  fields: string[];
+}
+
+/**
+ * Integrations management UI.
+ * SUPER_ADMIN only.
+ */
 export default function IntegrationsPage() {
-  const ready = useRequireAuth();
-  const [email, setEmail] = useState<string>();
-  const [settings, setSettings] = useState<IntegrationSetting[]>([]);
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [available, setAvailable] = useState<AvailableIntegration[]>([]);
   const [loading, setLoading] = useState(true);
-  const [denied, setDenied] = useState(false);
-  const [open, setOpen] = useState<string | null>(null);
-  const [draft, setDraft] = useState<Record<string, string>>({});
-  const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    try {
-      const s = await api.get<IntegrationSetting[]>('/settings/integrations');
-      setSettings(s);
-    } catch (err) {
-      if (err instanceof ApiException && (err.status === 403 || err.status === 401)) setDenied(true);
-    }
-  }, []);
+  const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+  const [testingProvider, setTestingProvider] = useState<string | null>(null);
+  const [testResult, setTestResult] = useState<any>(null);
 
   useEffect(() => {
-    if (!ready) return;
-    (async () => { const m = await auth.me(); setEmail(m.email); await load(); setLoading(false); })();
-  }, [ready, load]);
+    fetchIntegrations();
+  }, []);
 
-  function edit(s: IntegrationSetting) {
-    setOpen(s.provider);
-    setDraft({ ...s.config, enabled: s.enabled ? 'true' : 'false' });
-    setSavedMsg(null);
-  }
-
-  async function save(provider: string) {
-    setError(null); setSavedMsg(null);
+  const fetchIntegrations = async () => {
     try {
-      const payload: Record<string, unknown> = { ...draft, enabled: draft.enabled === 'true' };
-      await api.put(`/settings/integrations/${provider}`, payload);
-      setSavedMsg('Saved. Secrets are stored securely and never shown again.');
-      setOpen(null);
-      await load();
+      setLoading(true);
+      const response = await api.get('/api/admin/integrations');
+      setIntegrations(response.data.integrations || []);
+      setAvailable(response.data.available || []);
+      setError(null);
     } catch (err) {
-      setError(err instanceof ApiException ? err.message : 'Could not save.');
+      setError('Failed to load integrations');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  if (!ready) return null;
+  const handleTestConnection = async (provider: string) => {
+    try {
+      setTestingProvider(provider);
+      const response = await api.post(`/api/admin/integrations/${provider}/test`);
+      setTestResult({ provider, ...response.data });
+    } catch (err) {
+      setTestResult({ provider, success: false, message: 'Test failed' });
+    } finally {
+      setTestingProvider(null);
+    }
+  };
 
-  if (denied) {
+  const groupedByCategory = available.reduce((acc, int) => {
+    if (!acc[int.category]) acc[int.category] = [];
+    acc[int.category].push(int);
+    return acc;
+  }, {} as Record<string, AvailableIntegration[]>);
+
+  if (loading) return <LoadingState />;
+
+  if (error) {
     return (
-      <AppShell email={email}>
-        <div className="card" style={{ padding: '2.5rem', textAlign: 'center', maxWidth: '34rem', margin: '3rem auto' }}>
-          <div style={{ fontSize: '2rem' }}>🔒</div>
-          <h2>Admins only</h2>
-          <p className="muted">Integration settings are managed by your organization's administrators.</p>
-        </div>
-      </AppShell>
+      <EmptyState
+        icon="❌"
+        title="Failed to load integrations"
+        description={error}
+      />
     );
   }
 
   return (
-    <AppShell email={email}>
-      <header className="page-head"><span className="eyebrow">Administration</span><h1>Integration settings</h1>
-        <p className="muted">Connect payments, video, email, and SSO for your organization. Secrets are stored securely and never displayed after saving.</p></header>
+    <div className={styles.integrationsPage}>
+      <h1>Integrations Management</h1>
+      <p className={styles.subtitle}>
+        Configure payment, email, SMS, storage, and authentication providers.
+      </p>
 
-      {error && <div className="alert">{error}</div>}
-      {savedMsg && <div className="ok">{savedMsg}</div>}
-
-      {loading ? <p className="faint">Loading…</p> : (
-        <div className="cards">
-          {settings.map((s) => {
-            const def = FIELDS[s.provider];
-            if (!def) return null;
-            const configured = Object.values(s.secrets_set).some(Boolean) || Object.keys(s.config).length > 0;
-            return (
-              <div key={s.provider} className="card intg">
-                <div className="intg-head">
-                  <h3>{def.title}</h3>
-                  <span className={`badge ${s.enabled ? 'badge-active' : configured ? 'badge-gold' : 'badge-draft'}`}>
-                    {s.enabled ? 'enabled' : configured ? 'configured' : 'not set'}
+      {/* Active Integrations */}
+      <section className={styles.section}>
+        <h2>Active Integrations</h2>
+        {integrations.length === 0 ? (
+          <EmptyState
+            icon="🔌"
+            title="No integrations configured"
+            description="Add an integration to get started"
+          />
+        ) : (
+          <div className={styles.integrationsList}>
+            {integrations.map((int) => (
+              <div key={int.id} className={styles.integrationCard}>
+                <div className={styles.integrationHeader}>
+                  <span className={styles.integrationIcon}>{int.icon}</span>
+                  <div>
+                    <h3>{int.name}</h3>
+                    <p className={styles.provider}>{int.provider}</p>
+                  </div>
+                  <span
+                    className={`${styles.badge} ${
+                      int.isActive ? styles.badgeActive : styles.badgeInactive
+                    }`}
+                  >
+                    {int.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
-
-                {open === s.provider ? (
-                  <div className="form">
-                    {def.fields.map((f) => (
-                      <div key={f.key} className="field">
-                        <label>{f.label}{f.secret && <span className="lock"> 🔒</span>}</label>
-                        <input className="input"
-                          type={f.secret ? 'password' : 'text'}
-                          placeholder={f.secret && s.secrets_set[f.key] ? '•••••••• (set — leave blank to keep)' : (f.placeholder || '')}
-                          value={f.secret ? (draft[f.key] ?? '') : (draft[f.key] ?? '')}
-                          onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })} />
-                      </div>
-                    ))}
-                    <label className="toggle">
-                      <input type="checkbox" checked={draft.enabled === 'true'}
-                        onChange={(e) => setDraft({ ...draft, enabled: e.target.checked ? 'true' : 'false' })} />
-                      <span>Enabled</span>
-                    </label>
-                    <div className="actions">
-                      <button className="btn btn-primary" onClick={() => save(s.provider)}>Save</button>
-                      <button className="btn btn-ghost" onClick={() => setOpen(null)}>Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="status-list">
-                      {def.fields.filter((f) => f.secret).map((f) => (
-                        <span key={f.key} className={`chip ${s.secrets_set[f.key] ? 'set' : ''}`}>
-                          {f.label}: {s.secrets_set[f.key] ? 'set' : '—'}
-                        </span>
-                      ))}
-                    </div>
-                    <button className="btn btn-ghost" onClick={() => edit(s)}>Configure</button>
-                  </>
-                )}
+                <div className={styles.integrationActions}>
+                  <button
+                    onClick={() => handleTestConnection(int.provider)}
+                    disabled={testingProvider === int.provider}
+                    className={styles.buttonSecondary}
+                  >
+                    {testingProvider === int.provider ? 'Testing...' : 'Test Connection'}
+                  </button>
+                  <button className={styles.buttonSecondary}>Edit</button>
+                  <button className={styles.buttonDanger}>Remove</button>
+                </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Test Result */}
+      {testResult && (
+        <section className={styles.section}>
+          <h2>Test Result</h2>
+          <div
+            className={`${styles.testResult} ${
+              testResult.success
+                ? styles.testResultSuccess
+                : styles.testResultError
+            }`}
+          >
+            <p>{testResult.message}</p>
+          </div>
+        </section>
       )}
 
-      <style jsx>{`
-        .page-head { margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 0.3rem; }
-        .page-head h1 { margin-top: 0.3rem; }
-        .alert { background: rgba(168,68,58,0.09); color: var(--rose); padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.88rem; }
-        .ok { background: rgba(79,122,104,0.1); color: var(--sage); padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.88rem; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
-        .intg { padding: 1.4rem; }
-        .intg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-        .intg-head h3 { margin: 0; font-size: 1rem; }
-        .status-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
-        .chip { font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: var(--surface-sunken); color: var(--ink-faint); }
-        .chip.set { background: rgba(79,122,104,0.12); color: var(--sage); }
-        .form { display: flex; flex-direction: column; gap: 0.75rem; }
-        .field { display: flex; flex-direction: column; gap: 0.3rem; }
-        .field label { font-size: 0.8rem; font-weight: 600; }
-        .lock { font-size: 0.7rem; }
-        .toggle { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; }
-        .actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-      `}</style>
-    </AppShell>
+      {/* Available Integrations */}
+      <section className={styles.section}>
+        <h2>Available Integrations</h2>
+        {Object.entries(groupedByCategory).map(([category, items]) => (
+          <div key={category} className={styles.categorySection}>
+            <h3 className={styles.categoryTitle}>
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </h3>
+            <div className={styles.integrationGrid}>
+              {items.map((int) => (
+                <div key={int.provider} className={styles.integrationOption}>
+                  <div className={styles.optionIcon}>{int.icon}</div>
+                  <h4>{int.name}</h4>
+                  <p className={styles.optionDescription}>
+                    {int.fields.length} fields to configure
+                  </p>
+                  <button
+                    onClick={() => setSelectedProvider(int.provider)}
+                    className={styles.buttonPrimary}
+                  >
+                    Configure
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+    </div>
   );
 }

@@ -1,0 +1,310 @@
+/* Admin pages styles */
+
+.settingsPage,
+.integrationsPage {
+  max-width: 1200px;
+}
+
+h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+
+.subtitle {
+  margin: 0 0 2rem 0;
+  color: var(--color-text-secondary, #666);
+  font-size: 1rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--color-text, #333);
+}
+
+.tabActive {
+  color: var(--color-accent, #1e40af);
+  border-bottom-color: var(--color-accent, #1e40af);
+}
+
+.tabContent {
+  background: var(--color-background, #fff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+/* Form */
+.form {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 600px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--color-text, #333);
+  font-size: 0.95rem;
+}
+
+.form input,
+.form select,
+.form textarea {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+  outline: none;
+  border-color: var(--color-accent, #1e40af);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.form input[type='checkbox'] {
+  width: auto;
+  margin-top: 0.25rem;
+}
+
+/* Buttons */
+.buttonPrimary {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-accent, #1e40af);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  background: var(--color-accent-dark, #1e3a8a);
+  transform: translateY(-2px);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text, #333);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonSecondary:hover {
+  border-color: var(--color-accent, #1e40af);
+  color: var(--color-accent, #1e40af);
+}
+
+.buttonDanger {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  background: transparent;
+  color: #dc2626;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonDanger:hover {
+  background: #fee2e2;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
+  color: var(--color-text, #333);
+}
+
+/* Integrations List */
+.integrationsList {
+  display: grid;
+  gap: 1rem;
+}
+
+.integrationCard {
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--color-background, #fff);
+}
+
+.integrationHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.integrationIcon {
+  font-size: 2rem;
+}
+
+.integrationHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.provider {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #666);
+}
+
+.badge {
+  margin-left: auto;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeActive {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badgeInactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.integrationActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Integration Grid */
+.integrationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.integrationOption {
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.integrationOption:hover {
+  border-color: var(--color-accent, #1e40af);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
+}
+
+.optionIcon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.integrationOption h4 {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.optionDescription {
+  margin: 0.5rem 0 1rem 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #666);
+}
+
+/* Test Result */
+.testResult {
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #22c55e;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.testResultError {
+  border-left-color: #ef4444;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* Category Section */
+.categorySection {
+  margin-bottom: 2rem;
+}
+
+.categoryTitle {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary, #666);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabs {
+    gap: 0.25rem;
+  }
+
+  .tab {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .tabContent {
+    padding: 1rem;
+  }
+
+  .integrationGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .integrationActions {
+    flex-wrap: wrap;
+  }
+}
