@@ -1,0 +1,5 @@
+vendor
+.env
+.git
+*.log
+storage/logs/*.log

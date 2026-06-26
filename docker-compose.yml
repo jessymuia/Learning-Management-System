@@ -1,0 +1,97 @@
+# ============================================================================
+# Production LMS — FULL STACK in one command:   docker compose up
+#
+# Brings up Postgres (migrated + seeded + demo data), Redis, the Laravel API,
+# a queue worker, and the Next.js frontend — all wired together.
+#
+#   Frontend:  http://localhost:3000
+#   API:       http://localhost:8000
+#   Demo login: demo+alice@acme.com / password   (instructor)
+# ============================================================================
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: lms_full
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # Demo/test data is NOT loaded automatically. The build always starts
+      # clean (schema + seed only). Load test data manually when you want it:
+      #   docker compose exec postgres psql -U postgres -d lms_full -f /seed/demo-data.sql
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # ordered init: the script runs migrations + seed + demo on first boot
+      - ./docker/00-init.sh:/docker-entrypoint-initdb.d/00-init.sh:ro
+      - ./database/migrations:/migrations:ro
+      - ./database:/seed:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lms_full"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: base64:daF15NbcIBVTVGf4u3YG3hfJbPhGVqIQ1ZxhCZMGdZw=
+      JWT_SECRET: local-dev-jwt-secret-change-me-in-production-0123456789
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: lms_full
+      DB_USERNAME: lms_app
+      DB_PASSWORD: lms_app_password
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      CACHE_STORE: file
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: array
+    ports: ["8000:8000"]
+    # entrypoint self-configures then serves
+    command: >
+      sh -c "php artisan serve --host=0.0.0.0 --port=8000"
+
+  worker:
+    build: ./backend
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      APP_KEY: base64:daF15NbcIBVTVGf4u3YG3hfJbPhGVqIQ1ZxhCZMGdZw=
+      JWT_SECRET: local-dev-jwt-secret-change-me-in-production-0123456789
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: lms_full
+      DB_USERNAME: lms_app
+      DB_PASSWORD: lms_app_password
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      QUEUE_CONNECTION: redis
+    command: php artisan queue:work --tries=3
+
+  frontend:
+    build: ./frontend
+    depends_on: [api]
+    environment:
+      NEXT_PUBLIC_API_BASE: http://api:8000
+    ports: ["3000:3000"]
+    command: npm start
+
+volumes:
+  pgdata:

@@ -1,0 +1,18 @@
+{
+  "app.name": "Atrium",
+  "nav.dashboard": "Dashboard",
+  "nav.courses": "Courses",
+  "nav.programs": "Programs",
+  "nav.grades": "Grades",
+  "auth.signin": "Sign in",
+  "auth.register": "Create account",
+  "auth.email": "Email",
+  "auth.password": "Password",
+  "auth.organization": "Organization",
+  "dashboard.welcome": "Welcome back, {name}.",
+  "dashboard.whatsNext": "What's next",
+  "courses.title": "Courses",
+  "courses.empty": "No courses yet",
+  "grades.title": "Grades",
+  "common.loading": "Loading…"
+}

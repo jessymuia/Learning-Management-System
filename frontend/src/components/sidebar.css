@@ -1,0 +1,112 @@
+/* ──────────────────────────────────────────────────────────────
+   Sidebar styles — plain global CSS (NOT styled-jsx) so the rules
+   always apply to Next's <Link> elements without scoping issues.
+   Matches eduflow: clean vertical rows, indigo active state, logo mark.
+   ────────────────────────────────────────────────────────────── */
+
+.app-shell { display: flex; min-height: 100vh; background: var(--paper); }
+
+.app-sidebar {
+  width: 256px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  transition: width 0.22s ease;
+}
+.app-sidebar.is-collapsed { width: 68px; }
+
+.app-brand-row {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; padding: 0 1rem; border-bottom: 1px solid var(--line); flex-shrink: 0;
+}
+.app-brand { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+.app-brand-mark {
+  width: 2.2rem; height: 2.2rem; border-radius: 9px; background: var(--accent); color: #fff;
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.app-brand-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.app-brand-name { font-size: 0.98rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+.app-brand-sub { font-size: 0.7rem; color: var(--ink-faint); }
+.app-collapse-btn {
+  display: grid; place-items: center; width: 32px; height: 32px;
+  background: none; border: none; color: var(--ink-faint); cursor: pointer; border-radius: 7px;
+  transition: background 0.15s ease, color 0.15s ease; flex-shrink: 0;
+}
+.app-collapse-btn:hover { background: var(--surface-sunken); color: var(--ink); }
+
+.app-nav { flex: 1; overflow-y: auto; padding: 0.9rem 0.65rem; }
+.app-nav::-webkit-scrollbar { width: 6px; }
+.app-nav::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+.app-nav-group {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 0.15rem; margin-bottom: 0.9rem;
+}
+.app-nav-group-label {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-faint); padding: 0 0.65rem; margin: 0.3rem 0 0.45rem;
+}
+
+/* the row itself — forced block-flex so links NEVER wrap inline */
+.app-nav-link {
+  display: flex !important;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.7rem;
+  border-radius: 9px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.app-nav-link:hover { background: var(--surface-sunken); color: var(--ink); }
+.app-nav-link.is-active { background: var(--accent-soft); color: var(--accent-deep); font-weight: 600; }
+
+.app-nav-icon { flex-shrink: 0; color: var(--ink-faint); display: inline-flex; }
+.app-nav-link:hover .app-nav-icon { color: var(--ink-soft); }
+.app-nav-link.is-active .app-nav-icon { color: var(--accent); }
+.app-nav-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+
+.is-collapsed .app-nav-link { justify-content: center; padding: 0.6rem; }
+.is-collapsed .app-nav-group-label { display: none; }
+
+.app-foot { border-top: 1px solid var(--line); padding: 0.85rem 0.75rem; flex-shrink: 0; }
+.app-theme-toggle {
+  width: 100%; display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 0.65rem; margin-bottom: 0.7rem; background: none; border: none;
+  color: var(--ink-soft); font-size: 0.86rem; font-weight: 500; cursor: pointer; border-radius: 9px;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.app-theme-toggle:hover { background: var(--surface-sunken); color: var(--ink); }
+.is-collapsed .app-theme-toggle { justify-content: center; }
+
+.app-identity { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.7rem; }
+.app-avatar {
+  width: 2.1rem; height: 2.1rem; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent); color: #fff; display: grid; place-items: center;
+  font-weight: 700; font-size: 0.85rem;
+}
+.app-identity-text { min-width: 0; }
+.app-who { font-size: 0.78rem; color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-role-badge { font-size: 0.68rem; color: var(--accent); font-weight: 600; margin-top: 0.05rem; }
+.app-signout {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.55rem; background: var(--surface-sunken); border: 1px solid var(--line);
+  color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 9px;
+  transition: all 0.15s ease;
+}
+.app-signout:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.3); color: var(--rose); }
+
+.app-content { flex: 1; padding: 2.5rem 3rem; max-width: 1200px; min-width: 0; }
+
+@media (max-width: 760px) {
+  .app-shell { flex-direction: column; }
+  .app-sidebar, .app-sidebar.is-collapsed { width: 100%; height: auto; position: static; }
+  .app-nav { max-height: 40vh; }
+  .app-content { padding: 1.5rem; }
+}

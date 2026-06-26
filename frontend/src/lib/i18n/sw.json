@@ -1,0 +1,18 @@
+{
+  "app.name": "Atrium",
+  "nav.dashboard": "Dashibodi",
+  "nav.courses": "Kozi",
+  "nav.programs": "Programu",
+  "nav.grades": "Alama",
+  "auth.signin": "Ingia",
+  "auth.register": "Fungua akaunti",
+  "auth.email": "Barua pepe",
+  "auth.password": "Nenosiri",
+  "auth.organization": "Shirika",
+  "dashboard.welcome": "Karibu tena, {name}.",
+  "dashboard.whatsNext": "Kinachofuata",
+  "courses.title": "Kozi",
+  "courses.empty": "Hakuna kozi bado",
+  "grades.title": "Alama",
+  "common.loading": "Inapakia…"
+}
