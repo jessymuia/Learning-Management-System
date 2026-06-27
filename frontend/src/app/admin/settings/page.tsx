@@ -33,8 +33,10 @@ export default function SystemSettingsPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await api.get<Settings>('/admin/settings');
-      setSettings(response);
+
+      const response = await api.get('/api/admin/settings');
+      setSettings(response.data);
+
       setError(null);
     } catch (err) {
       setError('Failed to load settings');
@@ -62,7 +64,9 @@ export default function SystemSettingsPage() {
 
   return (
     <div className={styles.settingsPage}>
-      <h1 className={styles.pageTitle}>System Settings</h1>
+
+      <h1>System Settings</h1>
+
       <p className={styles.subtitle}>
         Configure platform-wide settings for security, email, storage, and more.
       </p>

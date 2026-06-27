@@ -18,7 +18,7 @@ export default function ForumPage({
 }: {
   params: { id: string; forumId: string };
 }) {
-  useRequireAuth();
+  const { user } = useRequireAuth();
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState('');
@@ -26,8 +26,8 @@ export default function ForumPage({
 
   useEffect(() => {
     api
-      .get<Discussion[]>(`/forums/${params.forumId}/discussions`)
-      .then((res) => setDiscussions(res))
+      .get(`/api/forums/${params.forumId}/discussions`)
+      .then((res) => setDiscussions(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, [params.forumId]);
@@ -36,13 +36,13 @@ export default function ForumPage({
     if (!newTitle.trim()) return;
     try {
       setPosting(true);
-      await api.post(`/forums/${params.forumId}/discussions`, {
+      await api.post(`/api/forums/${params.forumId}/discussions`, {
         title: newTitle,
       });
       setNewTitle('');
       // Refresh discussions
-      const res = await api.get<Discussion[]>(`/forums/${params.forumId}/discussions`);
-      setDiscussions(res);
+      const res = await api.get(`/api/forums/${params.forumId}/discussions`);
+      setDiscussions(res.data);
     } catch (err) {
       console.error(err);
     } finally {

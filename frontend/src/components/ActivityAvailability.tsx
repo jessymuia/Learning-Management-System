@@ -36,8 +36,8 @@ export default function ActivityAvailability({
   const checkAvailability = async () => {
     try {
       setLoading(true);
-      const response = await api.get<AvailabilityCheck>(`/activities/${activityId}/availability`);
-      setAvailability(response);
+      const response = await api.get(`/api/activities/${activityId}/availability`);
+      setAvailability(response.data);
       setError(null);
     } catch (err) {
       setError('Failed to check availability');

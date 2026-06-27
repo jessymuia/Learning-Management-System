@@ -17,14 +17,14 @@ interface Order {
 }
 
 export default function PaymentHistoryPage() {
-  useRequireAuth();
+  const { user } = useRequireAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
-      .get<Order[]>(`/orders/mine`)
-      .then((res) => setOrders(res))
+      .get('/api/orders/mine')
+      .then((res) => setOrders(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);

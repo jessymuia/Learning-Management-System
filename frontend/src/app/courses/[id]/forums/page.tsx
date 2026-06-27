@@ -13,14 +13,14 @@ interface Forum {
 }
 
 export default function ForumsPage({ params }: { params: { id: string } }) {
-  useRequireAuth();
+  const { user } = useRequireAuth();
   const [forums, setForums] = useState<Forum[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
-      .get<Forum[]>(`/forums?courseId=${params.id}`)
-      .then((res) => setForums(res))
+      .get(`/api/forums?courseId=${params.id}`)
+      .then((res) => setForums(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, [params.id]);

@@ -52,6 +52,9 @@ export default function IntegrationsPage() {
       }>('/admin/integrations');
       setIntegrations(data.integrations || []);
       setAvailable(data.available || []);
+      const response = await api.get('/api/admin/integrations');
+      setIntegrations(response.data.integrations || []);
+      setAvailable(response.data.available || []);
       setError(null);
     } catch (err) {
       setError('Failed to load integrations');
@@ -64,10 +67,10 @@ export default function IntegrationsPage() {
   const handleTestConnection = async (provider: string) => {
     try {
       setTestingProvider(provider);
-      const result = await api.post<{ success?: boolean; message?: string }>(
-        `/admin/integrations/${provider}/test`
-      );
-      setTestResult({ provider, ...result });
+
+      const response = await api.post(`/api/admin/integrations/${provider}/test`);
+      setTestResult({ provider, ...response.data });
+
     } catch (err) {
       setTestResult({ provider, success: false, message: 'Test failed' });
     } finally {
@@ -95,7 +98,9 @@ export default function IntegrationsPage() {
 
   return (
     <div className={styles.integrationsPage}>
-      <h1 className={styles.pageTitle}>Integrations Management</h1>
+
+      <h1>Integrations Management</h1>
+
       <p className={styles.subtitle}>
         Configure payment, email, SMS, storage, and authentication providers.
       </p>

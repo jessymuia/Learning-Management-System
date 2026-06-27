@@ -36,8 +36,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-        const response = await api.get<DashboardData>('/dashboard');
-        setDashboardData(response);
+        const response = await api.get('/api/dashboard');
+        setDashboardData(response.data);
         setError(null);
       } catch (err) {
         setError('Failed to load dashboard');

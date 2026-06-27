@@ -5,14 +5,14 @@
   max-width: 1200px;
 }
 
-.pageTitle {
+h1 {
   margin: 0 0 0.5rem 0;
   font-size: 2rem;
 }
 
 .subtitle {
   margin: 0 0 2rem 0;
-  color: var(--ink-soft);
+  color: var(--color-text-secondary, #666);
   font-size: 1rem;
 }
 
@@ -20,7 +20,7 @@
 .tabs {
   display: flex;
   gap: 0.5rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
   margin-bottom: 2rem;
   overflow-x: auto;
 }
@@ -29,7 +29,7 @@
   padding: 0.75rem 1rem;
   border: none;
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--color-text-secondary, #666);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -39,17 +39,17 @@
 }
 
 .tab:hover {
-  color: var(--ink);
+  color: var(--color-text, #333);
 }
 
 .tabActive {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  color: var(--color-accent, #1e40af);
+  border-bottom-color: var(--color-accent, #1e40af);
 }
 
 .tabContent {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--color-background, #fff);
+  border: 1px solid var(--color-border, #e0e0e0);
   border-radius: 8px;
   padding: 2rem;
 }
@@ -69,7 +69,7 @@
 
 .label {
   font-weight: 600;
-  color: var(--ink);
+  color: var(--color-text, #333);
   font-size: 0.95rem;
 }
 
@@ -77,9 +77,9 @@
 .form select,
 .form textarea {
   padding: 0.75rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--color-border, #e0e0e0);
   border-radius: 6px;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   transition: border-color 0.2s ease;
 }
@@ -88,7 +88,7 @@
 .form select:focus,
 .form textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--color-accent, #1e40af);
   box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
 }
 
@@ -102,7 +102,7 @@
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 6px;
-  background: var(--accent);
+  background: var(--color-accent, #1e40af);
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -110,7 +110,7 @@
 }
 
 .buttonPrimary:hover:not(:disabled) {
-  background: var(--accent-deep);
+  background: var(--color-accent-dark, #1e3a8a);
   transform: translateY(-2px);
 }
 
@@ -121,18 +121,18 @@
 
 .buttonSecondary {
   padding: 0.6rem 1.2rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--color-border, #e0e0e0);
   border-radius: 6px;
   background: transparent;
-  color: var(--ink);
+  color: var(--color-text, #333);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .buttonSecondary:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--color-accent, #1e40af);
+  color: var(--color-accent, #1e40af);
 }
 
 .buttonDanger {
@@ -158,7 +158,7 @@
 .section h2 {
   margin: 0 0 1.5rem 0;
   font-size: 1.25rem;
-  color: var(--ink);
+  color: var(--color-text, #333);
 }
 
 /* Integrations List */
@@ -168,10 +168,10 @@
 }
 
 .integrationCard {
-  border: 1px solid var(--line);
+  border: 1px solid var(--color-border, #e0e0e0);
   border-radius: 8px;
   padding: 1.5rem;
-  background: var(--surface);
+  background: var(--color-background, #fff);
 }
 
 .integrationHeader {
@@ -193,7 +193,7 @@
 .provider {
   margin: 0.25rem 0 0 0;
   font-size: 0.85rem;
-  color: var(--ink-soft);
+  color: var(--color-text-secondary, #666);
 }
 
 .badge {
@@ -229,7 +229,7 @@
 }
 
 .integrationOption {
-  border: 1px solid var(--line);
+  border: 1px solid var(--color-border, #e0e0e0);
   border-radius: 8px;
   padding: 1.5rem;
   text-align: center;
@@ -237,7 +237,7 @@
 }
 
 .integrationOption:hover {
-  border-color: var(--accent);
+  border-color: var(--color-accent, #1e40af);
   box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
 }
 
@@ -254,7 +254,7 @@
 .optionDescription {
   margin: 0.5rem 0 1rem 0;
   font-size: 0.85rem;
-  color: var(--ink-soft);
+  color: var(--color-text-secondary, #666);
 }
 
 /* Test Result */
@@ -282,7 +282,7 @@
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--ink-soft);
+  color: var(--color-text-secondary, #666);
 }
 
 /* Responsive */

@@ -1,4 +1,4 @@
-/* Shared component styles — aligned with design system CSS variables */
+/* Shared component styles */
 
 /* ─── Loading State ─── */
 .loadingState {
@@ -16,21 +16,23 @@
 }
 
 .spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--line);
-  border-top-color: var(--accent);
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border, #e0e0e0);
+  border-top-color: var(--color-accent, #1e40af);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loadingState p {
-  color: var(--ink-soft);
-  font-size: 0.92rem;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
 }
 
 /* ─── Empty State ─── */
@@ -40,35 +42,34 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 2rem;
-  gap: 0.85rem;
-  min-height: 280px;
+  gap: 1rem;
+  min-height: 300px;
   text-align: center;
-  border: 2px dashed var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
+  border: 2px dashed var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  background: var(--color-background-secondary, #fafafa);
 }
 
 .emptyIcon {
-  font-size: 2.5rem;
-  opacity: 0.5;
-  color: var(--ink-faint);
+  font-size: 3rem;
+  opacity: 0.6;
 }
 
 .emptyTitle {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--color-text, #333);
 }
 
 .emptyDescription {
   margin: 0;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
 }
 
 .emptyAction {
-  margin-top: 0.75rem;
+  margin-top: 1rem;
 }
 
 /* ─── Error State ─── */
@@ -79,52 +80,51 @@
   justify-content: center;
   padding: 3rem 2rem;
   gap: 1rem;
-  min-height: 300px;
+  min-height: 400px;
   text-align: center;
-  background: rgba(220, 38, 38, 0.06);
-  border-radius: var(--radius);
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: #fee2e2;
+  border-radius: 8px;
+  border: 2px solid #fecaca;
 }
 
 .errorIcon {
-  font-size: 2.5rem;
-  color: var(--rose);
+  font-size: 3rem;
 }
 
 .errorTitle {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--rose);
+  color: #991b1b;
 }
 
 .errorMessage {
   margin: 0;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
+  color: #7f1d1d;
+  font-size: 0.95rem;
   max-width: 500px;
 }
 
-/* ─── Sidebar Navigation (DynamicSidebar fallback) ─── */
+/* ─── Sidebar Navigation ─── */
 .sidebar {
-  background: var(--surface);
-  border-right: 1px solid var(--line);
+  background: var(--color-background, #fff);
+  border-right: 1px solid var(--color-border, #e0e0e0);
   overflow-y: auto;
   max-height: 100vh;
 }
 
 .sidebarHeader {
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid var(--line);
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
 }
 
 .sidebarHeader h2 {
   margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary, #666);
 }
 
 .navList {
@@ -136,30 +136,29 @@
 .navItem {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.6rem 0.8rem;
-  margin: 0.15rem 0;
-  border-radius: 9px;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0;
+  border-radius: 6px;
   text-decoration: none;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: background 0.14s ease, color 0.14s ease;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
 .navItem:hover {
-  background: var(--surface-sunken);
-  color: var(--ink);
+  background: var(--color-background-secondary, #f5f5f5);
+  color: var(--color-text, #333);
 }
 
 .navItem.active {
-  background: var(--accent-soft);
-  color: var(--accent-deep);
+  background: var(--color-accent-light, #eff6ff);
+  color: var(--color-accent, #1e40af);
   font-weight: 600;
 }
 
 .icon {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   flex-shrink: 0;
 }
 
@@ -169,24 +168,21 @@
 
 /* ─── Buttons ─── */
 .button {
-  padding: 0.65rem 1.25rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  background: var(--accent);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-accent, #1e40af);
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.16s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
+  transition: all 0.2s ease;
 }
 
 .button:hover {
-  background: var(--accent-deep);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
-  transform: translateY(-1px);
+  background: var(--color-accent-dark, #1e3a8a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
 }
 
 .button:active {
@@ -195,8 +191,22 @@
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
-  .loadingState { min-height: 150px; padding: 2rem 1rem; }
-  .emptyState { min-height: 200px; padding: 2rem 1rem; }
-  .errorState { min-height: 250px; padding: 2rem 1rem; }
-  .sidebar { max-height: calc(100vh - 50px); }
+  .loadingState {
+    min-height: 150px;
+    padding: 2rem 1rem;
+  }
+
+  .emptyState {
+    min-height: 200px;
+    padding: 2rem 1rem;
+  }
+
+  .errorState {
+    min-height: 300px;
+    padding: 2rem 1rem;
+  }
+
+  .sidebar {
+    max-height: calc(100vh - 50px);
+  }
 }

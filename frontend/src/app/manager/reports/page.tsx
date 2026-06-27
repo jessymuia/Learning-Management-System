@@ -16,14 +16,14 @@ interface TenantOverview {
 }
 
 export default function ManagerReportsPage() {
-  useRequireAuth();
+  const { user } = useRequireAuth();
   const [data, setData] = useState<TenantOverview | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
-      .get<TenantOverview>(`/reports/tenant`)
-      .then((res) => setData(res))
+      .get('/api/reports/tenant')
+      .then((res) => setData(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);

@@ -38,8 +38,8 @@ export default function CourseGradebook({ courseId }: CourseGradebookProps) {
   const fetchGradebook = async () => {
     try {
       setLoading(true);
-      const response = await api.get<{ items?: GradeItem[] }>(`/grades/course/${courseId}`);
-      setItems(response.items || []);
+      const response = await api.get(`/api/grades/course/${courseId}`);
+      setItems(response.data.items || []);
       setError(null);
     } catch (err) {
       setError('Failed to load gradebook');

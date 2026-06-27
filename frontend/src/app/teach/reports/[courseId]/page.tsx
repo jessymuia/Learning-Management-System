@@ -19,14 +19,14 @@ export default function TeacherReportPage({
 }: {
   params: { courseId: string };
 }) {
-  useRequireAuth();
+  const { user } = useRequireAuth();
   const [students, setStudents] = useState<StudentProgress[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
-      .get<StudentProgress[]>(`/reports/course/${params.courseId}`)
-      .then((res) => setStudents(res))
+      .get(`/api/reports/course/${params.courseId}`)
+      .then((res) => setStudents(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, [params.courseId]);

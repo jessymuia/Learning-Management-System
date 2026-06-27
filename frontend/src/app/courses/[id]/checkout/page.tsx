@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage({ params }: { params: { id: string } }) {
-  useRequireAuth();
+  const { user } = useRequireAuth();
   const router = useRouter();
   const [provider, setProvider] = useState('stripe');
   const [loading, setLoading] = useState(false);
@@ -16,23 +16,22 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      const res = await api.post<{ order: { id: string; status: string; amount_minor: number }; item: any }>(
-        '/checkout/initiate',
-        {
-          itemType: 'course',
-          itemId: params.id,
-          provider,
-        }
-      );
 
-      setOrder(res);
+      const res = await api.post('/api/checkout/initiate', {
+        itemType: 'course',
+        itemId: params.id,
+        provider,
+      });
+
+      setOrder(res.data);
 
       if (provider === 'mpesa') {
         // Trigger M-Pesa STK push
-        await triggerMpesaStkPush(res);
+        await triggerMpesaStkPush(res.data);
       } else if (provider === 'stripe') {
         // Redirect to Stripe checkout
-        window.location.href = `/api/checkout/stripe?orderId=${res.order.id}`;
+        window.location.href = `/api/checkout/stripe?orderId=${res.data.order.id}`;
+
       }
     } catch (err: any) {
       setError(err.message);
@@ -43,7 +42,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
 
   const triggerMpesaStkPush = async (data: any) => {
     try {
-      await api.post('/checkout/mpesa-stk', {
+      const res = await api.post('/api/checkout/mpesa-stk', {
         orderId: data.order.id,
         phoneNumber: prompt('Enter M-Pesa phone number:'),
       });
