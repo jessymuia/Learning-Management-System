@@ -6,7 +6,7 @@ import {
   type TeacherCourse, type TeacherOverview, type TeacherStudent,
 } from '@/lib/api';
 import {
-  BookOpen, Users2, ClipboardCheck, MessagesSquare, PenSquare, GraduationCap,
+  BookOpen, Users2, ClipboardCheck, MessageSquare, PenSquare, GraduationCap,
   Plus, Upload, FileText, Megaphone, ChevronRight, Clock, AlertTriangle,
   CheckCircle2, ArrowRight, Layers, Activity, RefreshCw, Bell,
 } from 'lucide-react';
@@ -90,7 +90,7 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
                 <a href={builderHref}><Upload size={14} /> Upload material</a>
                 <a href="/teach/quiz"><PenSquare size={14} /> Create quiz</a>
                 <a href={builderHref}><FileText size={14} /> Create assignment</a>
-                <a href="/forums"><MessagesSquare size={14} /> Create forum</a>
+                <a href="/forums"><MessageSquare size={14} /> Create forum</a>
                 <a href="/teach/grading"><ClipboardCheck size={14} /> Grade submissions</a>
                 <a href="/messages"><Megaphone size={14} /> Send announcement</a>
               </div>
@@ -228,14 +228,14 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
 
           {activeTab === 'questions' && (
             (ov?.student_questions ?? []).length === 0 ? (
-              <EmptyMini icon={<MessagesSquare size={28} />}
+              <EmptyMini icon={<MessageSquare size={28} />}
                 text="No open student questions. Questions from Q&amp;A forums in your courses appear here until you post an answer." />
             ) : (
               <ul className="task-list">
                 {ov!.student_questions.map((q) => (
                   <li key={q.discussion_id}>
                     <a href={`/forums/${q.forum_id}`}>
-                      <span className="task-ic warn"><MessagesSquare size={14} /></span>
+                      <span className="task-ic warn"><MessageSquare size={14} /></span>
                       <span className="task-body">
                         <span className="task-title">{q.subject}
                           <span className="late-tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>UNANSWERED</span>
@@ -252,14 +252,14 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
 
           {activeTab === 'forums' && (
             (ov?.course_forums ?? []).length === 0 ? (
-              <EmptyMini icon={<MessagesSquare size={28} />}
+              <EmptyMini icon={<MessageSquare size={28} />}
                 text="No forums yet. Create a forum inside an assigned course." />
             ) : (
               <ul className="task-list">
                 {ov!.course_forums.map((f) => (
                   <li key={f.id}>
                     <a href={`/forums`}>
-                      <span className="task-ic neutral"><MessagesSquare size={14} /></span>
+                      <span className="task-ic neutral"><MessageSquare size={14} /></span>
                       <span className="task-body">
                         <span className="task-title">{f.name}
                           <span className="forum-type">{f.type}</span>
@@ -277,7 +277,7 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
           <div className="task-footer">
             <a href="/teach/grading"><ClipboardCheck size={14} /> Grade all submissions</a>
             <a href="/teach/quiz"><PenSquare size={14} /> Quiz management</a>
-            <a href="/forums"><MessagesSquare size={14} /> Forum management</a>
+            <a href="/forums"><MessageSquare size={14} /> Forum management</a>
           </div>
         </Card>
       </section>
@@ -325,7 +325,7 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
             <div className="wf-step">
               <div className="wf-num">4</div>
               <a href="/forums" className="wf-card">
-                <MessagesSquare size={18} />
+                <MessageSquare size={18} />
                 <strong>Set up forums</strong>
                 <span>Discussion and announcements</span>
               </a>
@@ -417,18 +417,18 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
       <div className="tea-cols2">
         <Card className="panel">
           <div className="panel-head">
-            <h3><MessagesSquare size={16} /> Forum management</h3>
+            <h3><MessageSquare size={16} /> Forum management</h3>
             <a href="/forums">Manage <ChevronRight size={13} /></a>
           </div>
           {(ov?.course_forums ?? []).length === 0 ? (
-            <EmptyMini icon={<MessagesSquare size={24} />}
+            <EmptyMini icon={<MessageSquare size={24} />}
               text="No forums yet. Create forums inside your assigned courses to engage students." />
           ) : (
             <ul className="forum-list">
               {ov!.course_forums.map((f) => (
                 <li key={f.id}>
                   <a href="/forums">
-                    <span className="fl-icon"><MessagesSquare size={14} /></span>
+                    <span className="fl-icon"><MessageSquare size={14} /></span>
                     <span className="fl-body">
                       <span className="fl-name">{f.name}</span>
                       <span className="fl-meta">{f.course} · {f.discussion_count} posts
@@ -454,10 +454,10 @@ export function TeacherDashboard({ firstName }: { firstName: string }) {
               <Megaphone size={16} /><div><strong>Announcements</strong><span>Notify your students</span></div>
             </a>
             <a href="/messages" className="comm-link">
-              <MessagesSquare size={16} /><div><strong>Messages</strong><span>Direct student messages</span></div>
+              <MessageSquare size={16} /><div><strong>Messages</strong><span>Direct student messages</span></div>
             </a>
             <a href="/forums" className="comm-link">
-              <MessagesSquare size={16} /><div><strong>Forum replies</strong><span>Respond to discussions</span></div>
+              <MessageSquare size={16} /><div><strong>Forum replies</strong><span>Respond to discussions</span></div>
             </a>
             <a href="/notifications" className="comm-link">
               <Bell size={16} /><div><strong>Notifications</strong><span>Course alerts</span></div>

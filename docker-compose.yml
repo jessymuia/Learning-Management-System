@@ -47,7 +47,7 @@ services:
       redis: { condition: service_healthy }
     environment:
       APP_ENV: local
-      APP_DEBUG: "true"
+      APP_DEBUG: "false"
       APP_KEY: base64:daF15NbcIBVTVGf4u3YG3hfJbPhGVqIQ1ZxhCZMGdZw=
       JWT_SECRET: local-dev-jwt-secret-change-me-in-production-0123456789
       DB_CONNECTION: pgsql

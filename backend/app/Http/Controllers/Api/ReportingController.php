@@ -3,61 +3,53 @@
 namespace App\Http\Controllers\Api;
 
 use App\Services\ReportingService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Support\TenantContext;
 
 class ReportingController extends Controller
 {
-    public function __construct(private ReportingService $reports) {}
-
-    public function courseOverview(Request $request, string $courseId): JsonResponse
+    public function __construct(private ReportingService $reporting)
     {
-        return response()->json(['data' => $this->reports->courseOverview(
-            $request->attributes->get('tenantId'), $courseId
-        )]);
     }
 
-    public function atRisk(Request $request, string $courseId): JsonResponse
+    public function tenantOverview(Request $request)
     {
-        $threshold = (float) $request->query('threshold', 50);
+        $user = auth()->user();
+        $tenantId = $user->tenant_id ?? $request->input('tenant_id');
 
-        return response()->json(['data' => $this->reports->atRiskLearners(
-            $request->attributes->get('tenantId'), $courseId, $threshold
-        )]);
+        return TenantContext::withTenant($tenantId, function () use ($tenantId) {
+            return $this->reporting->getTenantOverview($tenantId);
+        });
     }
 
-    public function orgOverview(Request $request): JsonResponse
+    public function courseReport(Request $request, string $courseId)
     {
-        return response()->json(['data' => $this->reports->orgOverview(
-            $request->attributes->get('tenantId')
-        )]);
+        $user = auth()->user();
+        $tenantId = $user->tenant_id ?? $request->input('tenant_id');
+
+        return TenantContext::withTenant($tenantId, function () use ($tenantId, $courseId) {
+            return $this->reporting->getCourseReport($tenantId, $courseId);
+        });
     }
 
-    public function teacherActivity(Request $request): JsonResponse
+    public function atRiskLearners(Request $request)
     {
-        return response()->json(['data' => $this->reports->teacherActivity(
-            $request->attributes->get('tenantId')
-        )]);
+        $user = auth()->user();
+        $tenantId = $user->tenant_id ?? $request->input('tenant_id');
+        $courseId = $request->query('courseId');
+
+        return TenantContext::withTenant($tenantId, function () use ($tenantId, $courseId) {
+            return $this->reporting->getAtRiskLearners($tenantId, $courseId);
+        });
     }
 
-    public function orgActivity(Request $request): JsonResponse
+    public function studentProgress(Request $request)
     {
-        return response()->json(['data' => $this->reports->orgActivity(
-            $request->attributes->get('tenantId')
-        )]);
-    }
+        $user = auth()->user();
+        $tenantId = $user->tenant_id ?? $request->input('tenant_id');
 
-    public function trends(Request $request): JsonResponse
-    {
-        return response()->json(['data' => $this->reports->trends(
-            $request->attributes->get('tenantId')
-        )]);
-    }
-
-    public function tenantOverview(Request $request): JsonResponse
-    {
-        return response()->json(['data' => $this->reports->tenantOverview(
-            $request->attributes->get('tenantId')
-        )]);
+        return TenantContext::withTenant($tenantId, function () use ($tenantId, $user) {
+            return $this->reporting->getStudentProgress($tenantId, $user->id);
+        });
     }
 }

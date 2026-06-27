@@ -1,0 +1,84 @@
+/* Activity availability styles */
+
+.indicator {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.available {
+  background: #f0fdf4;
+  border-left-color: #22c55e;
+  color: #166534;
+}
+
+.unavailable {
+  background: #fef2f2;
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+.icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.content {
+  flex: 1;
+}
+
+.reason {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.prerequisites {
+  margin: 1rem 0 0 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.label {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prerequisites ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  list-style: disc;
+}
+
+.prerequisites li {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.nextAvailable {
+  margin: 0.75rem 0 0 0;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .indicator {
+    gap: 0.75rem;
+  }
+
+  .icon {
+    font-size: 1.25rem;
+  }
+
+  .reason {
+    font-size: 0.9rem;
+  }
+}

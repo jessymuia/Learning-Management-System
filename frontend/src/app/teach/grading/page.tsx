@@ -53,7 +53,7 @@ function GradingInner() {
   function openGrade(s: Submission) {
     setActive(s);
     setScore(s.grade != null ? String(s.grade) : '');
-    setFeedback(s.feedback ?? '');
+    setFeedback(typeof s.feedback === 'string' ? s.feedback : '');
     setError(null);
   }
 
@@ -140,12 +140,12 @@ function GradingInner() {
           <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save grade'}</Button>
         </>}>
         {error && <Alert tone="error">{error}</Alert>}
-        {active?.text_content && (
+        {typeof active?.text_content === 'string' && active.text_content ? (
           <div className="submission-text">
             <span className="faint" style={{ fontSize: '0.78rem' }}>Submission</span>
             <p>{active.text_content}</p>
           </div>
-        )}
+        ) : null}
         <Field label="Score"><Input type="number" value={score} onChange={(e) => setScore(e.target.value)} placeholder="0–100" /></Field>
         <Field label="Feedback"><Textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} rows={4} placeholder="Comments for the student…" /></Field>
       </Modal>

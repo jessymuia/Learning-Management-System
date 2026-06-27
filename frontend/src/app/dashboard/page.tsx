@@ -10,14 +10,6 @@ import { ManagerDashboard } from '@/components/dashboards/ManagerDashboard';
 import { SystemAdminDashboard } from '@/components/dashboards/SystemAdminDashboard';
 import { resolveRole } from '@/lib/roleResolver';
 
-/**
- * Dashboard router — picks a role-specific dashboard based on the signed-in
- * user's permissions. Each role gets its own data-rich experience:
- *   System Admin → all tenants, users, system reports, billing, settings
- *   Tenant Manager → org stats, people, programs, courses, payments
- *   Teacher → my courses, units/lessons, students, grading
- *   Student → my programs, courses, progress, grades, certificates
- */
 export default function DashboardPage() {
   const ready = useRequireAuth();
   const [email, setEmail] = useState<string>();
@@ -42,8 +34,8 @@ export default function DashboardPage() {
   if (!ready) return null;
 
   const firstName = (email?.split('@')[0] ?? 'there').replace(/[._]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-
   const role = resolveRole({ roles, isSuperAdmin, permissions: perms });
+
 
   function pick() {
     if (role === 'admin') return <SystemAdminDashboard firstName={firstName} />;

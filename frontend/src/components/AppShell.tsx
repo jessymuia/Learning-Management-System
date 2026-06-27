@@ -4,85 +4,175 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, BookOpen, GraduationCap, Award, MessageSquare, Users2,
-  Calendar, Mail, FileBadge, PenSquare, Layers, ClipboardCheck, UserPlus,
-  BarChart3, Settings, Building2, Shield, LogOut, PanelLeftClose, PanelLeftOpen,
-  Plug, Moon, Sun, CreditCard, Palette, Bell, type LucideIcon,
+  Mail, PenSquare, Layers, ClipboardCheck, BarChart3,
+  Settings, Building2, Shield, LogOut, PanelLeftClose, PanelLeftOpen,
+  Plug, Moon, Sun, CreditCard, Bell, UserCircle, ScrollText, Landmark,
+  ActivitySquare, ClipboardList, Users, type LucideIcon,
 } from 'lucide-react';
 import { auth } from '@/lib/api';
 import './sidebar.css';
 import { resolveRole } from '@/lib/roleResolver';
 
-type NavItem = { href: string; label: string; icon: LucideIcon; need?: string };
+type NavItem = { href: string; label: string; icon: LucideIcon };
+type NavGroup = { label: string | null; items: NavItem[] };
 
-const ROLE_NAV: Record<string, NavItem[]> = {
-  student: [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/courses', label: 'My Courses', icon: BookOpen },
-    { href: '/assignments', label: 'Assignments', icon: ClipboardCheck },
-    { href: '/quizzes', label: 'Quizzes', icon: PenSquare },
-    { href: '/grades', label: 'Grades', icon: GraduationCap },
-    { href: '/forums', label: 'Forums', icon: MessageSquare },
-    { href: '/messages', label: 'Messages', icon: Mail },
-    { href: '/credentials', label: 'Certificates', icon: Award },
-    { href: '/notifications', label: 'Notifications', icon: Bell },
-  ],
-  teacher: [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/courses', label: 'Assigned Courses', icon: BookOpen },
-    { href: '/teach', label: 'Teaching Workspace', icon: PenSquare },
-    { href: '/teach/builder', label: 'Lessons & Activities', icon: Layers },
-    { href: '/teach/grading', label: 'Grading', icon: ClipboardCheck },
-    { href: '/quizzes', label: 'Quizzes', icon: PenSquare },
-    { href: '/forums', label: 'Course Forums', icon: MessageSquare },
-    { href: '/messages', label: 'Messages', icon: Mail },
-    { href: '/reports', label: 'Reports', icon: BarChart3 },
-  ],
-  manager: [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/people', label: 'People', icon: Users2 },
-    { href: '/admin/programs', label: 'Programs & Courses', icon: Layers },
-    { href: '/courses', label: 'Courses', icon: BookOpen },
-    { href: '/payments', label: 'Payments', icon: CreditCard },
-    { href: '/reports', label: 'Reports', icon: BarChart3 },
-    { href: '/forums', label: 'Forums', icon: MessageSquare },
-    { href: '/messages', label: 'Messages', icon: Mail },
-  ],
+const ADMIN_NAV: NavGroup[] = [
+  {
+    label: null,
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Platform Management',
+    items: [
+      { href: '/admin/organizations', label: 'Organizations', icon: Building2 },
+      { href: '/admin/users', label: 'Users', icon: Users2 },
+      { href: '/admin/roles', label: 'Roles & Permissions', icon: Shield },
+      { href: '/admin/tenants', label: 'Tenants', icon: Landmark },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
+      { href: '/reports', label: 'Reports', icon: BarChart3 },
+      { href: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
+      { href: '/admin/billing', label: 'Billing', icon: CreditCard },
+      { href: '/admin/integrations', label: 'Integrations', icon: Plug },
+    ],
+  },
+  {
+    label: 'System',
+    items: [
+      { href: '/settings', label: 'Settings', icon: Settings },
+      { href: '/account', label: 'Account', icon: UserCircle },
+    ],
+  },
+];
+
+const MANAGER_NAV: NavGroup[] = [
+  {
+    label: null,
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Management',
+    items: [
+      { href: '/admin/people', label: 'People', icon: Users2 },
+      { href: '/teachers', label: 'Teachers', icon: GraduationCap },
+      { href: '/students', label: 'Students', icon: Users },
+      { href: '/admin/programs', label: 'Programs', icon: Layers },
+      { href: '/courses', label: 'Courses', icon: BookOpen },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
+      { href: '/payments', label: 'Payments', icon: CreditCard },
+      { href: '/reports', label: 'Reports', icon: BarChart3 },
+      { href: '/forums', label: 'Forums', icon: MessageSquare },
+      { href: '/messages', label: 'Messages', icon: Mail },
+    ],
+  },
+  {
+    label: 'Settings',
+    items: [
+      { href: '/settings', label: 'Organization Settings', icon: Settings },
+    ],
+  },
+];
+
+const TEACHER_NAV: NavGroup[] = [
+  {
+    label: null,
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Teaching',
+    items: [
+      { href: '/courses', label: 'My Courses', icon: BookOpen },
+      { href: '/lessons', label: 'Lessons', icon: Layers },
+      { href: '/activities', label: 'Activities', icon: ActivitySquare },
+      { href: '/assignments', label: 'Assignments', icon: ClipboardList },
+      { href: '/quizzes', label: 'Quizzes', icon: PenSquare },
+      { href: '/grading', label: 'Grading', icon: ClipboardCheck },
+      { href: '/students', label: 'Students', icon: Users },
+    ],
+  },
+  {
+    label: 'Communication',
+    items: [
+      { href: '/forums', label: 'Course Forums', icon: MessageSquare },
+      { href: '/messages', label: 'Messages', icon: Mail },
+    ],
+  },
+  {
+    label: null,
+    items: [
+      { href: '/reports', label: 'Reports', icon: BarChart3 },
+    ],
+  },
+];
+
+const STUDENT_NAV: NavGroup[] = [
+  {
+    label: null,
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Learning',
+    items: [
+      { href: '/courses', label: 'My Courses', icon: BookOpen },
+      { href: '/lessons', label: 'Lessons', icon: Layers },
+      { href: '/assignments', label: 'Assignments', icon: ClipboardList },
+      { href: '/quizzes', label: 'Quizzes', icon: PenSquare },
+      { href: '/grades', label: 'Grades', icon: GraduationCap },
+      { href: '/credentials', label: 'Certificates', icon: Award },
+    ],
+  },
+  {
+    label: 'Community',
+    items: [
+      { href: '/forums', label: 'Forums', icon: MessageSquare },
+      { href: '/messages', label: 'Messages', icon: Mail },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { href: '/account', label: 'Profile', icon: UserCircle },
+      { href: '/notifications', label: 'Notifications', icon: Bell },
+    ],
+  },
+];
+
+const ROLE_GROUPS: Record<string, NavGroup[]> = {
+  admin: ADMIN_NAV,
+  manager: MANAGER_NAV,
+  teacher: TEACHER_NAV,
+  student: STUDENT_NAV,
 };
 
-const SUPERADMIN_NAV: NavItem[] = [
-  { href: '/operator', label: 'Super Admin', icon: Shield },
-  { href: '/admin/integrations', label: 'Integrations', icon: Plug },
-  { href: '/reports', label: 'Reports', icon: BarChart3 },
-  { href: '/account', label: 'Account', icon: Settings },
-];
-
-const GROUPS = [
-  { label: null, hrefs: ['/dashboard', '/courses', '/programs', '/grades', '/credentials', '/payments'] },
-  { label: 'Community', hrefs: ['/forums', '/groups', '/calendar', '/messages', '/notifications'] },
-  { label: 'Teaching', hrefs: ['/teach', '/teach/builder', '/teach/quiz', '/teach/grading', '/teach/enrolments'] },
-  { label: 'Administration', hrefs: ['/admin', '/admin/people', '/admin/programs', '/admin/integrations', '/admin/branding', '/reports'] },
-  { label: null, hrefs: ['/account'] },
-];
-
-export function AppShell({ children, email }: { children: React.ReactNode; email?: string; isSuperAdmin?: boolean }) {
+export function AppShell({ children, email }: { children: React.ReactNode; email?: string }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [perms, setPerms] = useState<string[]>([]);
   const [role, setRole] = useState<string>('student');
   const [collapsed, setCollapsed] = useState(false);
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
     auth.me().then((m) => {
-      setIsAdmin(!!m.isSuperAdmin);
-      setPerms(m.permissions ?? []);
-      setRole(resolveRole({ roles: m.roles ?? [], isSuperAdmin: m.isSuperAdmin, permissions: m.permissions ?? [] }));
+      const resolved = resolveRole({ roles: m.roles ?? [], isSuperAdmin: m.isSuperAdmin, permissions: m.permissions ?? [] });
+      setRole(resolved);
     }).catch(() => {});
   }, []);
 
-  // Load this tenant's white-label branding and apply its colors as CSS tokens,
-  // so every component using var(--accent)/var(--sage) picks up the org's palette.
   useEffect(() => {
     import('@/lib/api').then(({ branding }) => {
       branding.mine().then((b) => {
@@ -110,10 +200,7 @@ export function AppShell({ children, email }: { children: React.ReactNode; email
     : role === 'teacher' ? 'Teacher'
     : 'Student';
 
-  const available = isAdmin ? SUPERADMIN_NAV : (ROLE_NAV[role] ?? ROLE_NAV.student);
-
-  const groups = [{ label: null as string | null, items: available }];
-
+  const groups: NavGroup[] = ROLE_GROUPS[role] ?? STUDENT_NAV;
   const initial = (email || '?').charAt(0).toUpperCase();
 
   function signOut() { auth.logout(); router.replace('/login'); }

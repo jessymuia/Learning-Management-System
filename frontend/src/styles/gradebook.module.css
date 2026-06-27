@@ -1,0 +1,186 @@
+/* Gradebook styles */
+
+.gradebook {
+  max-width: 1000px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.recalculateBtn {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recalculateBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.recalculateBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Overall Grade */
+.overallGrade {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.gradeBox {
+  padding: 1.5rem;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  text-align: center;
+  background: var(--accent-soft);
+}
+
+.gradeBig {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.gradeLabel {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead {
+  background: var(--surface-sunken);
+  border-bottom: 2px solid var(--line);
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-sunken);
+}
+
+.row.calculated {
+  background: #f0f9ff;
+}
+
+.row.category {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.table td {
+  padding: 1rem;
+  font-size: 0.95rem;
+}
+
+.itemName {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.itemType {
+  font-size: 1.2rem;
+}
+
+.formula {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  font-weight: normal;
+}
+
+.type {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.grade {
+  font-weight: 600;
+  font-family: var(--mono);
+}
+
+.max {
+  color: var(--ink-soft);
+}
+
+.percentage {
+  font-weight: 600;
+  font-family: var(--mono);
+}
+
+.pass {
+  color: #16a34a;
+}
+
+.fail {
+  color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .table {
+    font-size: 0.85rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem;
+  }
+
+  .header h2 {
+    font-size: 1.25rem;
+  }
+
+  .gradeBig {
+    font-size: 2rem;
+  }
+}

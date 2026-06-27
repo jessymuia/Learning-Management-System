@@ -58,7 +58,7 @@ async function request<T>(
   // 204 / empty
   if (res.status === 204) return undefined as T;
 
-  let payload: any = null;
+  let payload: unknown = null;
   const text = await res.text();
   if (text) {
     try {
@@ -69,25 +69,22 @@ async function request<T>(
   }
 
   if (!res.ok) {
-    const err: ApiError = payload?.error ?? { code: 'error', message: `Request failed (${res.status})` };
+    const err: ApiError = (payload as any)?.error ?? { code: 'error', message: `Request failed (${res.status})` };
     throw new ApiException(res.status, err);
   }
 
-  return (payload?.data ?? payload) as T;
+  return ((payload as any)?.data ?? payload) as T;
 }
 
 export const api = {
   get: <T>(path: string, opts?: { auth?: boolean }) => request<T>('GET', path, undefined, opts),
   getRaw: <T>(path: string, opts?: { auth?: boolean }): Promise<T> => {
-    // like get() but returns the full payload without unwrapping .data
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + '/api';
-    return fetch(`${base}${path}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    }).then((r) => r.json() as Promise<T>);
+    // Returns the full payload without unwrapping .data
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (opts?.auth !== false && tokens.access) {
+      headers['Authorization'] = `Bearer ${tokens.access}`;
+    }
+    return fetch(`/api${path}`, { headers }).then((r) => r.json() as Promise<T>);
   },
   post: <T>(path: string, body?: unknown, opts?: { auth?: boolean }) => request<T>('POST', path, body, opts),
   put: <T>(path: string, body?: unknown, opts?: { auth?: boolean }) => request<T>('PUT', path, body, opts),
@@ -200,7 +197,7 @@ export const auth = {
       email: profile.email ?? profile.user?.email,
       isSuperAdmin: Boolean(profile.isSuperAdmin ?? profile.is_super_admin),
       operatorLevel: profile.operatorLevel ?? profile.operator_level ?? null,
-      roles: profile.roles ?? profile.role ? (Array.isArray(profile.roles) ? profile.roles : [profile.role]) : [],
+      roles: profile.roles ?? (profile.role ? (Array.isArray(profile.roles) ? profile.roles : [profile.role]) : []),
       permissions: profile.permissions ?? [],
     };
   },
@@ -250,16 +247,16 @@ export type Submission = {
   state: string;
   status?: string;
   workflow_state: string | null;
-  text_content?: any;
+  text_content?: unknown;
   submitted_at: string | null;
   is_late: boolean;
   grade?: number | null;
-  feedback?: any;
+  feedback?: unknown;
 };
 
 export type Section = { id: string; section_num: number; name: string | null; visible: boolean };
 export type Notification = {
-  id: string; channel: string; type: string; payload: any; read_at: string | null; created_at: string;
+  id: string; channel: string; type: string; payload: Record<string, unknown>; read_at: string | null; created_at: string;
 };
 export type Credential = {
   id: string; verification_code: string; issued_at: string; type: string; name: string;
@@ -316,8 +313,6 @@ export type AtRiskLearner = { user_id: string; email: string; course_total_pct: 
 export type BuilderSection = { id: string; section_num: number; name: string | null; visible: boolean };
 export type BuilderModule = { id: string; section_id: string; section_num: number; module_type: string; instance_id: string; sort_order: number; visible: boolean; title?: string };
 
-// ── Enrolment management ──
-
 // ── Enrolment management (course roster) ──
 export type RosterEntry = { id: string; user_id: string; email: string; status: string; start_at: string | null; end_at: string | null };
 
@@ -332,7 +327,6 @@ export type IntegrationSetting = {
 // ── Assignment listing (teacher grading picker) ──
 export type AssignmentRow = { id: string; title: string; due_at: string | null; submission_count: number; graded_count: number };
 
-
 export type UserOrder = {
   id: string; item_type: string; item_id: string; amount_minor: number; currency: string;
   status: string; created_at: string; item_title?: string | null; receipt?: string | null; invoice_number?: string | null;
@@ -342,14 +336,13 @@ export type TenantOrder = {
   created_at: string; buyer_email: string; item_title?: string | null;
 };
 
-
 export type Branding = {
   name?: string; logoUrl?: string | null;
   primaryColor: string; accentColor: string; defaultTheme: string;
 };
 export const branding = {
   mine: () => api.get<Branding>('/branding'),
-  save: (b: Partial<Branding> & { displayName?: string; logoUrl?: string }) => api.put<Branding>('/branding', b),
+  save: (b: Partial<Branding> & { displayName?: string | null; logoUrl?: string | null }) => api.put<Branding>('/branding', b),
 };
 
 export type NotifPrefs = Record<string, boolean>;
@@ -361,7 +354,6 @@ export const notifications = {
   list: (unread = false) => api.get<Notification[]>(`/notifications${unread ? '?unread=true' : ''}`),
   markRead: (id: string) => api.post(`/notifications/${id}/read`, {}),
 };
-
 
 export type CourseAssignment = {
   id: string; title: string; due_at: string | null;
@@ -379,7 +371,6 @@ export const assignments = {
   submit: (aid: string) => api.post(`/assignments/${aid}/submit`, {}),
 };
 
-
 export type CourseSection = { id: string; section_num: number; name: string; visible: boolean };
 export type CourseLesson = { id: string; section_id: string; title: string; sort_order: number };
 export type CourseModule = { id: string; section_id: string; section_num: number; module_type: string; instance_id: string; sort_order: number; title: string | null };
@@ -396,7 +387,6 @@ export const courseStructure = {
   markActivity: (moduleId: string) => api.post(`/modules/${moduleId}/completion`, {}),
 };
 
-
 export type TrendPoint = { label: string; value: number };
 export type ReportTrends = {
   enrolments: TrendPoint[];
@@ -407,7 +397,6 @@ export type ReportTrends = {
 export const reports = {
   trends: () => api.get<ReportTrends>('/reports/trends'),
 };
-
 
 export type PlatformOverview = {
   active_tenants: number; suspended_tenants: number;
@@ -433,7 +422,6 @@ export const operator = {
   setStatus: (tenantId: string, status: string) => api.patch(`/operator/tenants/${tenantId}/status`, { status }),
 };
 
-
 export type TopCourse = { id: string; label: string; shortname: string; enrolments: number; completions: number };
 export type OrgOverview = {
   total_courses: number; published_courses: number; draft_courses: number;
@@ -450,7 +438,6 @@ export const orgReports = {
   teachers: () => api.get<TeacherActivity[]>('/reports/teachers'),
   activity: () => api.get<OrgActivityItem[]>('/reports/activity'),
 };
-
 
 export type TeacherCourse = { id: string; shortname: string; fullname: string; status: string; students: number; completed: number; total_activities: number; pending_grading: number; last_activity: string|null; avg_grade_pct: number|null; forum_count: number };
 export type PendingGrade = { submission_id: string; assignment_id: string; title: string; student: string; submitted_at: string|null; is_late: boolean; course: string };
@@ -469,7 +456,6 @@ export const teacher = {
   overview: () => api.get<TeacherOverview>('/teacher/overview'),
   students: () => api.get<TeacherStudent[]>('/teacher/students'),
 };
-
 
 export type StudentCourse = { id: string; shortname: string; fullname: string; status: string; total_activities: number; completed_activities: number; total_lessons: number; completion_state: string|null; instructor: string|null; is_paid: boolean; price_minor: number; locked: boolean };
 export type ContinueLearning = { course_id: string; course: string; last_lesson: string|null; next_activity: string|null; next_type: string|null; progress_pct: number } | null;

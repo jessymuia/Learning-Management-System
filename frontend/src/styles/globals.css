@@ -1,0 +1,31 @@
+/**
+ * Legacy CSS variable aliases — bridges old --color-* vars to the design
+ * system defined in src/app/globals.css.  Imported by DashboardLayout.
+ * All new code should use the design-system vars directly.
+ */
+
+:root {
+  /* Aliases for old --color-* references */
+  --color-background: var(--surface);
+  --color-background-secondary: var(--surface-sunken);
+  --color-border: var(--line);
+  --color-text: var(--ink);
+  --color-text-secondary: var(--ink-soft);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-soft);
+  --color-accent-dark: var(--accent-deep);
+
+  /* Legacy font aliases */
+  --font-sans: var(--sans);
+  --font-serif: var(--serif);
+  --font-mono: var(--mono);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
